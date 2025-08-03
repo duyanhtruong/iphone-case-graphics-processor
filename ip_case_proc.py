@@ -14,11 +14,17 @@ class iPhoneCaseProcessor:
         
         # iPhone model specifications
         self.model_specs = {
-            # Mini Models - 9.5cm
-            'iPhone 12 mini': {'width_cm': 9.5, 'category': 'mini'},
-            'iPhone 13 mini': {'width_cm': 9.5, 'category': 'mini'},
+            # iPhone 7/8 Series
+            'iPhone 7': {'width_cm': 9.5, 'category': 'legacy'},
+            'iPhone 7 Plus': {'width_cm': 10.8, 'category': 'legacy_plus'},
+            'iPhone 8': {'width_cm': 9.5, 'category': 'legacy'},
+            'iPhone 8 Plus': {'width_cm': 10.8, 'category': 'legacy_plus'},
             
-            # Regular/Pro Models - 9.8cm
+            # Mini Models
+            'iPhone 12 mini': {'width_cm': 9.0, 'category': 'mini'},  # CHANGED from 9.5 to 9.0
+            'iPhone 13 mini': {'width_cm': 9.0, 'category': 'mini'},  # CHANGED from 9.5 to 9.0
+            
+            # Regular/Pro Models
             'iPhone 12': {'width_cm': 9.8, 'category': 'regular'},
             'iPhone 12 Pro': {'width_cm': 9.8, 'category': 'regular'},
             'iPhone 13': {'width_cm': 9.8, 'category': 'regular'},
@@ -30,15 +36,15 @@ class iPhoneCaseProcessor:
             'iPhone 16': {'width_cm': 9.8, 'category': 'regular'},
             'iPhone 16 Pro': {'width_cm': 9.8, 'category': 'regular'},
             
-            # XR/11 Models - 10.2cm
-            'iPhone XR': {'width_cm': 10.2, 'category': 'xr11'},
-            'iPhone 11': {'width_cm': 10.2, 'category': 'xr11'},
+            # XR/11 Models
+            'iPhone XR': {'width_cm': 10.5, 'category': 'xr11'},        # CHANGED from 10.2 to 10.5
+            'iPhone 11': {'width_cm': 10.5, 'category': 'xr11'},       # CHANGED from 10.2 to 10.5
             
-            # XS Max/11 Pro Max - 10.45cm
-            'iPhone XS Max': {'width_cm': 10.45, 'category': 'xs_max'},
-            'iPhone 11 Pro Max': {'width_cm': 10.45, 'category': 'xs_max'},
+            # XS Max/11 Pro Max 
+            'iPhone XS Max': {'width_cm': 10.7, 'category': 'xs_max'}, # CHANGED from 10.45 to 10.7
+            'iPhone 11 Pro Max': {'width_cm': 10.8, 'category': 'xs_max'}, # CHANGED from 10.45 to 10.8
             
-            # Plus/Pro Max Models - 10.65cm
+            # Plus/Pro Max Models
             'iPhone 12 Pro Max': {'width_cm': 10.65, 'category': 'plus_max'},
             'iPhone 13 Pro Max': {'width_cm': 10.65, 'category': 'plus_max'},
             'iPhone 14 Plus': {'width_cm': 10.65, 'category': 'plus_max'},
@@ -48,10 +54,10 @@ class iPhoneCaseProcessor:
             'iPhone 16 Plus': {'width_cm': 10.65, 'category': 'plus_max'},
             'iPhone 16 Pro Max': {'width_cm': 10.65, 'category': 'plus_max'},
             
-            # X/XS/11 Pro Models - 11.3cm
-            'iPhone X': {'width_cm': 11.3, 'category': 'x_xs'},
-            'iPhone XS': {'width_cm': 11.3, 'category': 'x_xs'},
-            'iPhone 11 Pro': {'width_cm': 11.3, 'category': 'x_xs'},
+            # X/XS/11 Pro Models
+            'iPhone X': {'width_cm': 8.3, 'category': 'x_xs'},         # CHANGED from 11.3 to 8.3
+            'iPhone XS': {'width_cm': 8.3, 'category': 'x_xs'},        # CHANGED from 11.3 to 8.3
+            'iPhone 11 Pro': {'width_cm': 10.0, 'category': 'x_xs'},   # CHANGED from 11.3 to 10.0
         }
         
         # Print film specifications - Portrait orientation
@@ -156,7 +162,7 @@ class iPhoneCaseProcessor:
         # Storage for processing data
         self.selected_folder = None
         self.selected_files = []
-        self.custom_output_folder = None  # New: store custom output location
+        self.custom_output_folder = None
         
         # Set initial output location status
         self.output_path_var.set("Using default location")
@@ -221,7 +227,7 @@ class iPhoneCaseProcessor:
         return None
         
     def detect_phone_model(self, filename):
-        """Auto-detect phone model from filename using comprehensive fuzzy matching"""
+        """Auto-detect phone model from filename using comprehensive fuzzy matching - UPDATED WITH NEW MODELS"""
         # Remove file extension and convert to lowercase
         name = os.path.splitext(filename.lower())[0]
         
@@ -234,7 +240,7 @@ class iPhoneCaseProcessor:
         # Remove extra whitespace
         name = re.sub(r'\s+', ' ', name)
         
-        # COMPREHENSIVE MODEL PATTERNS
+        # COMPREHENSIVE MODEL PATTERNS - UPDATED WITH iPhone 7/8 SERIES
         # Order is CRITICAL - most specific patterns first to avoid false matches
         
         model_patterns = {
@@ -327,6 +333,20 @@ class iPhoneCaseProcessor:
             # Be very careful here - only match isolated X patterns
             r'(?:i?phone?|iph?|ip|a|apple)\s*x(?!\w)': 'iPhone X',
             r'^x$': 'iPhone X',  # Only standalone X
+            
+            # ===== iPhone 8 Series - NEW =====
+            # Plus patterns (must come before base model)
+            r'(?:i?phone?|iph?|ip|a|apple)?\s*8\s*(?:plus|pl|\+|p(?=\s|$))': 'iPhone 8 Plus',
+            
+            # Base model - enhanced to handle "iphone8" and "iphone 8"
+            r'(?:i?phone?|iph?|ip|a|apple)?\s*8(?!\d)(?!\s*(?:plus|pl|\+|p))': 'iPhone 8',
+            
+            # ===== iPhone 7 Series - NEW =====
+            # Plus patterns (must come before base model)
+            r'(?:i?phone?|iph?|ip|a|apple)?\s*7\s*(?:plus|pl|\+|p(?=\s|$))': 'iPhone 7 Plus',
+            
+            # Base model - enhanced to handle "iphone7" and "iphone 7"
+            r'(?:i?phone?|iph?|ip|a|apple)?\s*7(?!\d)(?!\s*(?:plus|pl|\+|p))': 'iPhone 7',
         }
         
         # Try to match patterns in order
@@ -343,6 +363,8 @@ class iPhoneCaseProcessor:
             r'^13$': 'iPhone 13',
             r'^12$': 'iPhone 12',
             r'^11$': 'iPhone 11',
+            r'^8$': 'iPhone 8',    # NEW
+            r'^7$': 'iPhone 7',    # NEW
         }
         
         for pattern, model in number_only_patterns.items():
@@ -352,7 +374,7 @@ class iPhoneCaseProcessor:
         return None
         
     def standardize_model_name(self, model_name):
-        """Convert model name to standardized filename format with proper case"""
+        """Convert model name to standardized filename format with proper case - UPDATED WITH NEW MODELS"""
         model_map = {
             'iPhone 16 Pro Max': 'iPhone16ProMax',
             'iPhone 16 Plus': 'iPhone16Plus',
@@ -381,11 +403,17 @@ class iPhoneCaseProcessor:
             'iPhone XS': 'iPhoneXS',
             'iPhone XR': 'iPhoneXR',
             'iPhone X': 'iPhoneX',
+            # NEW iPhone 8 Series
+            'iPhone 8 Plus': 'iPhone8Plus',
+            'iPhone 8': 'iPhone8',
+            # NEW iPhone 7 Series
+            'iPhone 7 Plus': 'iPhone7Plus',
+            'iPhone 7': 'iPhone7',
         }
         return model_map.get(model_name, model_name.replace(' ', '_'))
         
     def format_display_model_name(self, model_name):
-        """Convert model name for display on canvas - replace iPhone with IP and use proper case"""
+        """Convert model name for display on canvas - replace iPhone with IP and use proper case - UPDATED WITH NEW MODELS"""
         # Replace iPhone with IP and maintain proper case
         display_map = {
             'iPhone 16 Pro Max': 'IP 16 Pro Max',
@@ -415,6 +443,12 @@ class iPhoneCaseProcessor:
             'iPhone XS': 'IP XS',
             'iPhone XR': 'IP XR',
             'iPhone X': 'IP X',
+            # NEW iPhone 8 Series
+            'iPhone 8 Plus': 'IP 8 Plus',
+            'iPhone 8': 'IP 8',
+            # NEW iPhone 7 Series
+            'iPhone 7 Plus': 'IP 7 Plus',
+            'iPhone 7': 'IP 7',
         }
         return display_map.get(model_name, model_name.replace('iPhone', 'IP'))
         
@@ -707,7 +741,7 @@ class iPhoneCaseProcessor:
             margin = round(0.5 * self.dpi / 2.54)  # 5mm margin in pixels (FIXED: use round())
             order_text = order_number  # Already a string (supports 3a, 3b, 3c format)
             
-            # Add order number in top-left corner (INK SAVING: Single draw, no bold effect)
+            # Add order number in top-left corner
             if order_font:
                 # Draw the text once only to save ink
                 draw.text((margin, margin), order_text, fill='black', font=order_font)
@@ -721,7 +755,7 @@ class iPhoneCaseProcessor:
                 model_text_x = margin + order_width + spacing
                 model_text_y = margin
                 
-                # Draw model name once only to save ink
+                # Draw model name
                 draw.text((model_text_x, model_text_y), display_model_name, fill='black', font=model_font)
             else:
                 # Fallback without font
@@ -737,7 +771,7 @@ class iPhoneCaseProcessor:
             return canvas
             
     def show_model_selection_dialog(self, filename):
-        """Show a dialog to manually select the iPhone model"""
+        """Show a dialog to manually select the iPhone model - UPDATED WITH NEW MODELS"""
         dialog = tk.Toplevel(self.root)
         dialog.title(f"Select Model for: {filename}")
         dialog.geometry("400x500")
@@ -789,6 +823,12 @@ class iPhoneCaseProcessor:
             ],
             "iPhone X Series": [
                 "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X"
+            ],
+            "iPhone 8 Series": [  # NEW
+                "iPhone 8 Plus", "iPhone 8"
+            ],
+            "iPhone 7 Series": [  # NEW
+                "iPhone 7 Plus", "iPhone 7"
             ]
         }
         
