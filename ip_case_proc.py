@@ -713,17 +713,17 @@ class iPhoneCaseProcessor:
             
             # Font file paths to try (Windows system fonts)
             font_paths = [
-                "C:/Windows/Fonts/arial.ttf",   # Arial Regular (no bold)
-                "arial.ttf",                    # System arial
-                "C:/Windows/Fonts/calibri.ttf",  # Calibri Regular (no bold)
+                "C:/Windows/Fonts/arialn.ttf",      # Arial Narrow (thinnest standard font)
+                "C:/Windows/Fonts/calibril.ttf",    # Calibri Light  
+                "C:/Windows/Fonts/segoeuil.ttf",    # Segoe UI Light
+                "C:/Windows/Fonts/arial.ttf",       # Fallback
             ]
             
             # Try to load fonts
             for font_path in font_paths:
                 try:
-                    # Updated font sizes as per user preference
-                    order_font = ImageFont.truetype(font_path, 196)  # User's preferred size
-                    model_font = ImageFont.truetype(font_path, 96)   # User's preferred size
+                    order_font = ImageFont.truetype(font_path, 104)
+                    model_font = ImageFont.truetype(font_path, 64)
                     break
                 except:
                     continue
@@ -744,7 +744,7 @@ class iPhoneCaseProcessor:
             # Add order number in top-left corner
             if order_font:
                 # Draw the text once only to save ink
-                draw.text((margin, margin), order_text, fill='black', font=order_font)
+                draw.text((margin, margin), order_text, fill='#808080', font=order_font)
                 
                 # Calculate order number width to position model name after it
                 order_bbox = draw.textbbox((0, 0), order_text, font=order_font)
@@ -756,7 +756,7 @@ class iPhoneCaseProcessor:
                 model_text_y = margin
                 
                 # Draw model name
-                draw.text((model_text_x, model_text_y), display_model_name, fill='black', font=model_font)
+                draw.text((model_text_x, model_text_y), display_model_name, fill='#808080', font=model_font)
             else:
                 # Fallback without font
                 draw.text((margin, margin), order_text, fill='black')
@@ -824,10 +824,10 @@ class iPhoneCaseProcessor:
             "iPhone X Series": [
                 "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X"
             ],
-            "iPhone 8 Series": [  # NEW
+            "iPhone 8 Series": [
                 "iPhone 8 Plus", "iPhone 8"
             ],
-            "iPhone 7 Series": [  # NEW
+            "iPhone 7 Series": [
                 "iPhone 7 Plus", "iPhone 7"
             ]
         }
